@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                sh"mvn clean package"
+            }
+        }
+
+        stage('Test') {
+            steps {
+                
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    kubernetesDeploy(
+                        kubeconfigId: 'jagadeesh-id',
+                        configs: 'C:\Program Files/kubernetes/deployment.yaml'
+                    )
+                }
+            }
+        }
+    }
+}
