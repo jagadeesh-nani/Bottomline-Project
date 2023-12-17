@@ -1,0 +1,26 @@
+# Use an OpenJDK image as the base image
+FROM maven:3.8.4-openjdk-11 AS MAVEN_BUILD
+
+# Copy the pom.xml file to the container
+COPY pom.xml /build/
+
+# Copy the source code
+COPY src /build/src/
+
+# Set the working directory
+WORKDIR /build/
+
+# Build the application
+RUN mvn clean package
+
+# Use a smaller base image for the runtime
+FROM openjdk:11-jre-slim
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the JAR file from the Maven build stage to the runtime stage
+COPY --from=MAVEN_BUILD /build/target/Vjagadeesh-app.jar /app/app.jar
+
+# Specify the command to run on container start
+CMD ["java", "-jar", "app.jar"]
